@@ -34,6 +34,9 @@ import NVActivityIndicatorView
      - parameter slider:      progress slider
      - parameter event:       action
      */
+     func controlView(controlView: BMPlayerControlView, onTapVolumeButton button: UIButton)
+    
+
     func controlView(controlView: BMPlayerControlView, slider: UISlider, onSliderEvent event: UIControlEvents)
     
     /**
@@ -56,6 +59,7 @@ open class BMPlayerControlView: UIView {
     open var selectedIndex = 0
     open var isFullscreen  = false
     open var isMaskShowing = true
+    open var isMute = false
     
     open var totalDuration:TimeInterval = 0
     open var delayItem: DispatchWorkItem?
@@ -97,6 +101,7 @@ open class BMPlayerControlView: UIView {
      fullScreenButton.isSelected = player.isFullscreen
      */
     open var fullscreenButton = UIButton(type: UIButtonType.custom)
+    open var volumeButton = UIButton(type: UIButtonType.custom)
     
     open var subtitleLabel    = UILabel()
     open var subtitleBackView = UIView()
@@ -237,6 +242,7 @@ open class BMPlayerControlView: UIView {
         UIView.animate(withDuration: 0.3, animations: {
             self.topMaskView.alpha    = alpha
             self.bottomMaskView.alpha = alpha
+            self.bottomMaskView.backgroundColor = UIColor.orange
             self.mainMaskView.backgroundColor = UIColor ( red: 0.0, green: 0.0, blue: 0.0, alpha: isShow ? 0.4 : 0.0)
             
             if isShow {
@@ -388,6 +394,18 @@ open class BMPlayerControlView: UIView {
         delegate?.controlView(controlView: self, didPressButton: button)
     }
     
+    open func onTapVolumeButton(_ button: UIButton) {
+        print("press volume")
+        if (self.isMute == false) {
+            self.isMute = true
+            volumeButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_volume_off"),    for: .normal)
+        } else {
+            self.isMute = false
+             volumeButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_volume_on"),    for: .normal)
+        }
+        delegate?.controlView(controlView: self, onTapVolumeButton:button)
+    }
+    
     /**
      Call when the tap gesture tapped
      
@@ -400,7 +418,7 @@ open class BMPlayerControlView: UIView {
         controlViewAnimation(isShow: !isMaskShowing)
     }
     
-    
+
     
     // MARK: - handle UI slider actions
     @objc func progressSliderTouchBegan(_ sender: UISlider)  {
@@ -496,7 +514,7 @@ open class BMPlayerControlView: UIView {
         mainMaskView.insertSubview(maskImageView, at: 0)
         mainMaskView.clipsToBounds = true
         mainMaskView.backgroundColor = UIColor ( red: 0.0, green: 0.0, blue: 0.0, alpha: 0.4 )
-       
+        
         // Top views
         topMaskView.addSubview(backButton)
         topMaskView.addSubview(titleLabel)
@@ -518,6 +536,7 @@ open class BMPlayerControlView: UIView {
         bottomMaskView.addSubview(totalTimeLabel)
         bottomMaskView.addSubview(progressView)
         bottomMaskView.addSubview(timeSlider)
+        bottomMaskView.addSubview(volumeButton)
         bottomMaskView.addSubview(fullscreenButton)
         
         playButton.tag = BMPlayerControlView.ButtonType.play.rawValue
@@ -560,6 +579,10 @@ open class BMPlayerControlView: UIView {
         fullscreenButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_fullscreen"),    for: .normal)
         fullscreenButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_portialscreen"), for: .selected)
         fullscreenButton.addTarget(self, action: #selector(onButtonPressed(_:)), for: .touchUpInside)
+        
+        volumeButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_volume_on"),    for: .normal)
+        //volumeButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_volume_on"), for: .selected)
+         volumeButton.addTarget(self, action: #selector(onTapVolumeButton), for: .touchUpInside)
         
         mainMaskView.addSubview(loadingIndector)
         
@@ -608,7 +631,7 @@ open class BMPlayerControlView: UIView {
         
         bottomMaskView.snp.makeConstraints { (make) in
             make.bottom.left.right.equalTo(mainMaskView)
-            make.height.equalTo(50)
+            make.height.equalTo(100)
         }
         
         // Top views
@@ -664,6 +687,16 @@ open class BMPlayerControlView: UIView {
             make.height.equalTo(50)
             make.centerY.equalTo(currentTimeLabel)
             make.left.equalTo(totalTimeLabel.snp.right)
+            make.right.equalTo(bottomMaskView.snp.right)
+        }
+        
+        volumeButton.snp.makeConstraints { (make) in
+            make.width.equalTo(50)
+            make.height.equalTo(50)
+//            make.top.equalTo(10)
+//            make.top.equalTo(bottomMaskView.snp.top)
+           // make.bottom.equalTo(20)
+            make.bottom.equalTo(fullscreenButton.snp.top)
             make.right.equalTo(bottomMaskView.snp.right)
         }
         
