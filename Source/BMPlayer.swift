@@ -518,6 +518,13 @@ extension BMPlayer: BMPlayerControlViewDelegate {
         playerLayer?.playAsset(asset: resource.definitions[index].avURLAsset)
     }
     
+  
+    public func controlView(controlView: BMPlayerControlView,
+                            onTapVolumeButton button: UIButton) {
+        print(isVolume)
+        self.avPlayer?.isMuted = !(self.avPlayer?.isMuted)!
+    }
+    
     public func controlView(controlView: BMPlayerControlView,
                             didPressButton button: UIButton) {
         if let action = BMPlayerControlView.ButtonType(rawValue: button.tag) {
