@@ -521,7 +521,7 @@ open class BMPlayerControlView: UIView {
         addSubview(chooseDefitionView)
         
         backButton.tag = BMPlayerControlView.ButtonType.back.rawValue
-        backButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_volume_off"), for: .normal)
+        backButton.setImage(BMImageResourcePath("Pod_Asset_BMPlayer_volume_on"), for: .normal)
         //backButton.addTarget(self, action: #selector(onButtonPressed(_:)), for: .touchUpInside)
         backButton.addTarget(self, action: #selector(onTapVolumeButton(_:)), for: .touchUpInside)
         
